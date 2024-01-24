@@ -9,10 +9,8 @@ import SwiftUI
 
 struct GameView: View {
     @State private var systemChoice: String = "chicken_placeholder"
-    @State private var userChoice: String = ""
-    @State private var button1IsOn: Bool = false
-    @State private var button2IsOn: Bool = false
-    
+    @State private var userChoice: String = "Empty"
+    @State private var winner: String = "Anyone"
 
     var body: some View {
         
@@ -29,37 +27,23 @@ struct GameView: View {
                     .frame(width: 100, height: 100)
                     .padding()
                 
-                Button(action: {
-                    // Handle choice 1
-                    self.userChoice = "Choice 1"
-                    // Add logic to compare choices and determine the winner
-                    // 버튼 입력하면 Choice1을 저장해 놓을 때가 필요함. 그것을 다른 뷰에서 사용해야 하니 Environment로 state 변수 만들어야 할 듯.
-                    //네비게이션 링크
-                    NavigationLink("Go to the result view", destination: ResultView(systemChoice: <#String#>, userChoice: self.userChoice, winner: <#String#>))
-                    // systemChoice와 winner는 closure로 만들어야 함.
-                    // roughly closure
-                    // systemChoice: { }
+                
+                HStack {
+                    NavigationLink(destination: ResultView(userChoice: $userChoice, systemChoice: $systemChoice, winner: $winner)) {
+                        Text("Choice_1")
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
                     
-                }) {
-                    Text("Choice 1")
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                }
-
-                Button(action: {
-                    // Handle choice 2
-                    self.userChoice = "Choice 2"
-                    // Add logic to compare choices and determine the winner
-                    //네비게이션 링크
-                    NavigationLink("Go to the result view", destination: ResultView(systemChoice: <#String#>, userChoice: self.userChoice, winner: <#String#>))
-                }) {
-                    Text("Choice 2")
-                        .padding()
-                        .background(Color.green)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
+                    NavigationLink(destination: ResultView(userChoice: $userChoice, systemChoice: $systemChoice, winner: $winner)) {
+                        Text("Choice_2")
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
                 }
             }
         }
@@ -67,15 +51,9 @@ struct GameView: View {
 }
 
 struct ResultView: View {
-    var systemChoice: String = {
-        if Int.random(in: 0...3) == 1 {
-            systemChoice = "Choice 1"
-        } else {
-            systemChoice = "Choice 2"
-        }
-    }()
-    var userChoice: String
-    var winner: String
+    @Binding var userChoice: String
+    @Binding var systemChoice: String
+    @Binding var winner: String
 
     var body: some View {
         VStack {
@@ -88,6 +66,8 @@ struct ResultView: View {
         }
     }
 }
+
+
 
 
 struct ContentView_Previews: PreviewProvider {
