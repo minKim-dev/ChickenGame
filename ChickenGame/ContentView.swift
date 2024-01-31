@@ -10,12 +10,16 @@
 import SwiftUI
 
 struct GameView: View {
+    private let choice1 = "Choice_1" // 이렇게 상수를 만들면 나중에 버튼 이름을 변경할 때 한 곳에서 변경하면 되서 훨씬 효율적임.
+    private let choice2 = "Choice_2"
+    private let numberOfChoices = 2
+    
     @State private var systemChoice: String = "chicken_placeholder"
     @State private var userChoice: String = "Empty"
     @State private var winner: String = "Anyone"
+    @State private var isActive: Bool = false
 
     var body: some View {
-
         NavigationView {
             VStack {
                 Text("Chicken Game")
@@ -30,27 +34,28 @@ struct GameView: View {
                     .padding()
 
                 HStack {
-                    NavigationLink(destination: ResultView(userChoice: $userChoice, systemChoice: $systemChoice, winner: $winner)) {
-                        Text("Choice_1")
+                    // NavigationLink의 destination 중복 문제로 인한 문제 수정해야함.
+                    NavigationLink(destination: ResultView(winner: $winner)) {
+                        Text("\(choice1)")
                             .padding()
                             .background(Color.blue)
                             .foregroundColor(.white)
                             .cornerRadius(8)
                             .onTapGesture {
-                                self.userChoice = "Choice_1" // navigationLink를 탭하면 userChoice가 변경됨.
+                                self.userChoice = choice1 // navigationLink를 탭하면 userChoice가 변경됨.
                                 self.updateSystemChoice()
                                 // Add logic to set systemChoice and winner based on the choice
                             }
                     }
 
-                    NavigationLink(destination: ResultView(userChoice: $userChoice, systemChoice: $systemChoice, winner: $winner)) {
-                        Text("Choice_2")
+                    NavigationLink(destination: ResultView(winner: $winner)) {
+                        Text("\(choice2)")
                             .padding()
                             .background(Color.blue)
                             .foregroundColor(.white)
                             .cornerRadius(8)
                             .onTapGesture {
-                                self.userChoice = "Choice_2"
+                                self.userChoice = choice2
                                 self.updateSystemChoice()
                             }
                     }
@@ -63,47 +68,48 @@ struct GameView: View {
     
     private func updateSystemChoice() {
             // Generate a random index to represent system choice
-            let randomIndex = Int.random(in: 0..<2)
+            // Avoide Magic Numbers: Instead of hardcoding Int.random(in: 0..<2) with 2,
+            //use a constant to make the code more readable and maintainable.
+            let randomIndex = Int.random(in: 0..<numberOfChoices)
 
-            // Set systemChoice based on the random index
+            // Setting systemChoice based on the random index
             systemChoice = (randomIndex == 0) ? "Choice_1" : "Choice_2"
 
-            // Add logic to determine the winner based on userChoice and systemChoice
+            // Logic to determine the winner based on userChoice and systemChoice
             determineWinner()
-        }
+    }
 
-        private func determineWinner() {
-            // Add your logic to determine the winner based on userChoice and systemChoice
-            // Set the winner variable accordingly
+    private func determineWinner() {
+            // Logic to determine the winner based on userChoice and systemChoice
+            // Setting the winner variable accordingly
             // systemChoice랑 userChoice 같을 경우 -> 승자가 나오지 않음.
             // systemChoice랑 userChoice 다를 경우 ->
             // systemChoice == "Choice_1", userChoice == "Choice_2" -> winner is system
             // systemChoice == "Choice_2", userChoice == "Choice_1" -> winner is user
             
-             if systemChoice == userChoice {
-                winner = "there's no winner"
-             
-             } else { // systemChoice != userChoice
-                if userChoice == "Choice_2" {
-                    winner = "system"
-                } else {
-                    winner = "user"
-                }
-             }
+            // Consider using a switch statement for winner determination.
+            // It can make the code more readable and scalable
+            // if you decide to add more choices in the future.
+        
+        switch(systemChoice, userChoice) {
+        case (choice1, choice2):
+            winner = "system"
+            
+        case (choice2, choice1):
+            winner = "user"
+            
+        default:
+            winner = "there's no winner."
         }
+    }
 }
 
 struct ResultView: View {
-    @Binding var userChoice: String
-    @Binding var systemChoice: String
     @Binding var winner: String
 
     var body: some View {
         VStack {
-            Text("System: \(systemChoice)")
-                .padding()
-            Text("User: \(userChoice)")
-                .padding()
+    
             Text("Winner: \(winner)")
                 .padding()
         }
