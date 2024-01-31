@@ -21,7 +21,7 @@ struct GameView: View {
                 Text("Chicken Game")
                     .font(.custom("AmericanTypewriter", fixedSize: 36))
 
-                Text("The name chicken has its origins in a game in which two drivers drive toward each other on a collision course: one must swerve, or both may die in the crash, but if one driver swerves and the other does not, the one who swerved will be called a chicken, meaning a coward; ").padding(10)
+                Text("The name chicken has its origins in a game in which two drivers drive toward each other on a collision course: one must swerve, or both may die in the crash, but if one driver swerves and the other does not, the one who swerved will be called a chicken, meaning a coward;").padding(10)
 
                 Image(systemChoice)
                     .resizable()
