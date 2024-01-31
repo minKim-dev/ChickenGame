@@ -35,7 +35,7 @@ struct GameView: View {
 
                 HStack {
                     // NavigationLink의 destination 중복 문제로 인한 문제 수정해야함.
-                    NavigationLink(destination: ResultView(winner: $winner)) {
+                    NavigationLink(destination: ResultView(winner: $winner), isActive: $isActive) {
                         Text("\(choice1)")
                             .padding()
                             .background(Color.blue)
@@ -44,11 +44,11 @@ struct GameView: View {
                             .onTapGesture {
                                 self.userChoice = choice1 // navigationLink를 탭하면 userChoice가 변경됨.
                                 self.updateSystemChoice()
-                                // Add logic to set systemChoice and winner based on the choice
+                                self.isActive = true
                             }
                     }
 
-                    NavigationLink(destination: ResultView(winner: $winner)) {
+                    NavigationLink(destination: ResultView(winner: $winner), isActive: $isActive) {
                         Text("\(choice2)")
                             .padding()
                             .background(Color.blue)
@@ -57,6 +57,7 @@ struct GameView: View {
                             .onTapGesture {
                                 self.userChoice = choice2
                                 self.updateSystemChoice()
+                                self.isActive = true
                             }
                     }
                     
@@ -65,6 +66,7 @@ struct GameView: View {
             }
         }
     }
+    
     
     private func updateSystemChoice() {
             // Generate a random index to represent system choice
