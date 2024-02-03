@@ -35,39 +35,33 @@ struct GameView: View {
 
                 HStack {
                     // NavigationLink의 destination 중복 문제로 인한 문제 수정해야함.
-                    NavigationLink(destination: ResultView(winner: $winner, userChoice: $userChoice, systemChoice: $systemChoice), isActive: $isActive) {
-                        Text("\(choice1)")
-                            .padding()
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                            .onTapGesture {
-                                self.userChoice = choice1 // navigationLink를 탭하면 userChoice가 변경됨.
-                                self.updateSystemChoice()
-                                self.isActive = true
-                            }
-                    }
-
-                    NavigationLink(destination: ResultView(winner: $winner, userChoice: $userChoice, systemChoice: $systemChoice), isActive: $isActive) {
-                        Text("\(choice2)")
-                            .padding()
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                            .onTapGesture {
-                                self.userChoice = choice2
-                                self.updateSystemChoice()
-                                self.isActive = true
-                            }
-                    }
-                    
-                    
+                    makeNavigationLink(for: choice1)
+                    makeNavigationLink(for: choice2)
                 }
             }
         }
     }
     
+    // 2024.02.03 improvement: I made a func to avoid duplicate code.
+    // it uses External Name for argument label.
+    // I used and external name for the parameter label to make the code
+    // more readable and self-explanatory when calling the function.
+    private func makeNavigationLink(for choice: String) -> some View  {
+        NavigationLink(destination: ResultView(winner: $winner, userChoice: $userChoice, systemChoice: $systemChoice), isActive: $isActive) {
+            Text("\(choice)")
+                .padding()
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(8)
+                .onTapGesture {
+                    self.userChoice = choice
+                    self.updateSystemChoice()
+                    self.isActive = true
+                }
+        }
+    }
     
+    // 2024.02.03 improvement: systemChoice is improved by using randomIndex. theres no magic numbers.
     private func updateSystemChoice() {
             // Generate a random index to represent system choice
             // Avoide Magic Numbers: Instead of hardcoding Int.random(in: 0..<2) with 2,
@@ -75,12 +69,13 @@ struct GameView: View {
             let randomIndex = Int.random(in: 0..<numberOfChoices)
 
             // Setting systemChoice based on the random index
-            systemChoice = (randomIndex == 0) ? "Choice_1" : "Choice_2"
+            systemChoice = "Choice_\(randomIndex + 1)"
 
             // Logic to determine the winner based on userChoice and systemChoice
             determineWinner()
     }
-
+    
+    // 2024.02.03 improvement: func is improved by using conditional operator instead of switch statement.
     private func determineWinner() {
             // Logic to determine the winner based on userChoice and systemChoice
             // Setting the winner variable accordingly
@@ -93,16 +88,7 @@ struct GameView: View {
             // It can make the code more readable and scalable
             // if you decide to add more choices in the future.
         
-        switch(systemChoice, userChoice) {
-        case (choice1, choice2):
-            winner = "system"
-            
-        case (choice2, choice1):
-            winner = "user"
-            
-        default:
-            winner = "there's no winner."
-        }
+        winner = (systemChoice == userChoice) ? "no winner" : (systemChoice == choice1) ? "system" : "user"
     }
 }
 
