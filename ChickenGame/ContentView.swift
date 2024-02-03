@@ -35,7 +35,7 @@ struct GameView: View {
 
                 HStack {
                     // NavigationLink의 destination 중복 문제로 인한 문제 수정해야함.
-                    NavigationLink(destination: ResultView(winner: $winner), isActive: $isActive) {
+                    NavigationLink(destination: ResultView(winner: $winner, userChoice: $userChoice, systemChoice: $systemChoice), isActive: $isActive) {
                         Text("\(choice1)")
                             .padding()
                             .background(Color.blue)
@@ -48,7 +48,7 @@ struct GameView: View {
                             }
                     }
 
-                    NavigationLink(destination: ResultView(winner: $winner), isActive: $isActive) {
+                    NavigationLink(destination: ResultView(winner: $winner, userChoice: $userChoice, systemChoice: $systemChoice), isActive: $isActive) {
                         Text("\(choice2)")
                             .padding()
                             .background(Color.blue)
@@ -108,13 +108,45 @@ struct GameView: View {
 
 struct ResultView: View {
     @Binding var winner: String
-
-    var body: some View {
-        VStack {
+    @Binding var userChoice: String
+    @Binding var systemChoice: String
     
-            Text("Winner: \(winner)")
-                .padding()
+   
+
+    // return to home and reset the data
+    var body: some View {
+        NavigationView {
+            VStack {
+                Text("userChoice: \(userChoice)")
+                    .padding()
+                
+                Text("systemChoice: \(systemChoice)")
+                    .padding()
+                
+                Text("Winner: \(winner)")
+                    .padding()
+                
+                NavigationLink(destination: GameView()) {
+                    Text("Return to home")
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                        .onTapGesture {
+                            self.reset()
+                        }
+                }
+            }
+            
+            
         }
+        
+    }
+    
+    private func reset() {
+        winner = ""
+        userChoice = ""
+        systemChoice = ""
     }
 }
 
